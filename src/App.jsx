@@ -1,11 +1,21 @@
 import { useState } from 'react';
 import './App.css';
+// Import the component, not just the file for side effects
+import LoginPage from "./login.jsx";
 
 function App() {
   const [query, setQuery] = useState('');
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Example: Function to handle successful login
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    // You might want to clear username/password from LoginPage state here
+    // or handle redirection/UI changes
+  };
 
   // TheMealDB uses '1' as a demo API key for general access
   const API_KEY = '1';
@@ -46,9 +56,19 @@ function App() {
     }
   };
 
+  // Conditionally render LoginPage or the main app content
+  if (!isLoggedIn) {
+    // Pass the login success handler to the LoginPage
+    // Note: You'll need to modify LoginPage to accept and call this prop
+    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  // Render the main recipe finder app if logged in
   return (
     <div className="App">
       <h1>Recipe Finder</h1>
+      {/* Add a logout button maybe? */}
+      <button onClick={() => setIsLoggedIn(false)}>Logout</button>
       <form onSubmit={handleSearch} className="search-form">
         <input
           type="text"
