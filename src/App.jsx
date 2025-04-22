@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './App.ss';
+import './App.css';
 
 function App() {
   const [query, setQuery] = useState('');
