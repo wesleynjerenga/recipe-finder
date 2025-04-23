@@ -5,37 +5,40 @@ function LoginPage({ onLoginSuccess }) {
   const [password, setPassword] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
-    console.log('Attempting login with:', username, password, 'as', isAdmin ? 'admin' : 'user');
+    setIsLoading(true);
 
-    // --- MOCK LOGIN ---
-    if (isAdmin) {
-      // Admin login check
-      if (username === "admin" && password === "admin123") {
-        console.log('Admin login successful');
+    try {
+      // Simulate API call with timeout
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Move login logic to backend in production
+      const isValidLogin = isAdmin 
+        ? (username === "admin" && password === "admin123")
+        : (username === "user" && password === "password");
+
+      if (isValidLogin) {
+        console.log(`${isAdmin ? 'Admin' : 'User'} login successful`);
+        // Clear form
+        setUsername('');
+        setPassword('');
+        // Notify parent component
         if (onLoginSuccess) {
-          onLoginSuccess({ isAdmin: true });
+          onLoginSuccess({ isAdmin });
         }
       } else {
-        console.log('Admin login failed');
-        setError('Invalid admin credentials');
+        setError(`Invalid ${isAdmin ? 'admin' : 'user'} credentials`);
       }
-    } else {
-      // Regular user login check
-      if (username === "user" && password === "password") {
-        console.log('User login successful');
-        if (onLoginSuccess) {
-          onLoginSuccess({ isAdmin: false });
-        }
-      } else {
-        console.log('User login failed');
-        setError('Invalid username or password');
-      }
+    } catch (err) {
+      setError('Login failed. Please try again.');
+      console.error('Login error:', err);
+    } finally {
+      setIsLoading(false);
     }
-    // --- END MOCK LOGIN ---
   };
 
   const containerStyle = {
@@ -87,8 +90,9 @@ function LoginPage({ onLoginSuccess }) {
     color: 'white',
     border: 'none',
     borderRadius: '4px',
-    cursor: 'pointer',
-    marginTop: '10px'
+    cursor: isLoading ? 'not-allowed' : 'pointer',
+    marginTop: '10px',
+    opacity: isLoading ? 0.7 : 1
   };
 
   const errorStyle = {
@@ -108,9 +112,15 @@ function LoginPage({ onLoginSuccess }) {
     <div style={containerStyle}>
       <h2>Login</h2>
       <button 
-        style={toggleButtonStyle} 
-        onClick={() => setIsAdmin(!isAdmin)}
+        style={toggleButtonStyle}
+        onClick={() => {
+          setIsAdmin(!isAdmin);
+          setError('');
+          setUsername('');
+          setPassword('');
+        }}
         type="button"
+        disabled={isLoading}
       >
         Switch to {isAdmin ? 'User' : 'Admin'} Login
       </button>
@@ -127,6 +137,7 @@ function LoginPage({ onLoginSuccess }) {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
         <div style={inputGroupStyle}>
@@ -140,10 +151,11 @@ function LoginPage({ onLoginSuccess }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={isLoading}
           />
         </div>
-        <button type="submit" style={buttonStyle}>
-          Login as {isAdmin ? 'Admin' : 'User'}
+        <button type="submit" style={buttonStyle} disabled={isLoading}>
+          {isLoading ? 'Logging in...' : `Login as ${isAdmin ? 'Admin' : 'User'}`}
         </button>
       </form>
     </div>
