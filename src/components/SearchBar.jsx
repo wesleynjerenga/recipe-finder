@@ -12,7 +12,7 @@ const SearchBar = ({ query, setQuery, handleSearch, loading }) => (
         {loading ? 'Searching...' : 'Search'}
       </button>
     </form>
-  );
+  )
   
   export default SearchBar;
   
