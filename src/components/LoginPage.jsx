@@ -11,7 +11,7 @@ const LoginPage = ({ onLoginSuccess }) => {
         <button onClick={handleLogin}>Log In</button>
       </div>
     );
-  };
+  }
   
   export default LoginPage;
   
