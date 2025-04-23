@@ -17,6 +17,6 @@ const RecipeList = ({ recipes, loading, error, query }) => {
       ))}
     </div>
   );
-}
+};
 
 export default RecipeList;
