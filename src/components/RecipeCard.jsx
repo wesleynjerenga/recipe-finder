@@ -26,7 +26,7 @@ const RecipeCard = ({ recipe }) => (
         </a>
       )}
     </div>
-  )
+  );
   
   export default RecipeCard;
   
