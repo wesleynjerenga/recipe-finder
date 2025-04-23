@@ -64,6 +64,6 @@ function App() {
       <RecipeList recipes={recipes} loading={loading} error={error} query={query} />
     </div>
   );
-}
+
 
 export default App;
