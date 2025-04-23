@@ -1,67 +1,71 @@
 import React, { useState } from 'react';
 
-// Accept onLoginSuccess as a prop
 function LoginPage({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(''); // Add error state for feedback
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setError(''); // Clear previous errors
-    // Add your actual login logic here (e.g., API call)
-    console.log('Attempting login with:', username, password);
+    setError('');
+    console.log('Attempting login with:', username, password, 'as', isAdmin ? 'admin' : 'user');
 
     // --- MOCK LOGIN ---
-    // Replace this with your actual authentication check
-    if (username === "user" && password === "password") {
-        console.log('Login successful');
+    if (isAdmin) {
+      // Admin login check
+      if (username === "admin" && password === "admin123") {
+        console.log('Admin login successful');
         if (onLoginSuccess) {
-          onLoginSuccess(); // Call the handler passed from App
+          onLoginSuccess({ isAdmin: true });
         }
+      } else {
+        console.log('Admin login failed');
+        setError('Invalid admin credentials');
+      }
     } else {
-        console.log('Login failed');
-        setError('Invalid username or password.'); // Provide feedback
+      // Regular user login check
+      if (username === "user" && password === "password") {
+        console.log('User login successful');
+        if (onLoginSuccess) {
+          onLoginSuccess({ isAdmin: false });
+        }
+      } else {
+        console.log('User login failed');
+        setError('Invalid username or password');
+      }
     }
     // --- END MOCK LOGIN ---
-
-    // Don't reset fields immediately if login fails, let user correct them
-    // setUsername('');
-    // setPassword('');
   };
 
-  // Basic centering styles - modified for full screen
   const containerStyle = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '100vh', // Use full viewport height
-    width: '100vw',     // Use full viewport width
+    minHeight: '100vh',
+    width: '100vw',
     textAlign: 'center',
-    // Optional: Add a background color if needed
-    // backgroundColor: '#eef',
-    // Ensure no external margins interfere (best handled globally, but can try here)
     margin: 0,
     padding: 0,
-    color: 'black', // Text color
+    color: 'black',
   };
 
   const formStyle = {
     display: 'flex',
     flexDirection: 'column',
-    gap: '10px', // Spacing between form elements
+    gap: '10px',
     padding: '20px',
     border: '1px solid #ccc',
     borderRadius: '8px',
     backgroundColor: '#f9f9f9',
-    minWidth: '300px' // Ensure form has some width
+    minWidth: '300px'
   };
 
   const inputGroupStyle = {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start', // Align labels to the left
+    alignItems: 'flex-start',
     width: '100%'
   };
 
@@ -72,12 +76,12 @@ function LoginPage({ onLoginSuccess }) {
 
   const inputStyle = {
     padding: '8px',
-    width: 'calc(100% - 16px)', // Account for padding
+    width: 'calc(100% - 16px)',
     border: '1px solid #ccc',
     borderRadius: '4px'
   };
 
-   const buttonStyle = {
+  const buttonStyle = {
     padding: '10px 15px',
     backgroundColor: '#007bff',
     color: 'white',
@@ -88,21 +92,34 @@ function LoginPage({ onLoginSuccess }) {
   };
 
   const errorStyle = {
-      color: 'red',
-      marginTop: '0',
-      marginBottom: '10px', // Add space below error
-      minHeight: '1.2em' // Reserve space even when no error
+    color: 'red',
+    marginTop: '0',
+    marginBottom: '10px',
+    minHeight: '1.2em'
   };
 
+  const toggleButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: isAdmin ? '#dc3545' : '#28a745',
+    marginBottom: '20px'
+  };
 
   return (
     <div style={containerStyle}>
       <h2>Login</h2>
-      {/* Display login errors */}
-      <p style={errorStyle}>{error || '\u00A0'}</p> {/* Use non-breaking space to maintain height */}
+      <button 
+        style={toggleButtonStyle} 
+        onClick={() => setIsAdmin(!isAdmin)}
+        type="button"
+      >
+        Switch to {isAdmin ? 'User' : 'Admin'} Login
+      </button>
+      <p style={errorStyle}>{error || '\u00A0'}</p>
       <form onSubmit={handleSubmit} style={formStyle}>
         <div style={inputGroupStyle}>
-          <label htmlFor="username" style={labelStyle}>Username or Email:</label>
+          <label htmlFor="username" style={labelStyle}>
+            {isAdmin ? 'Admin Username:' : 'Username:'}
+          </label>
           <input
             style={inputStyle}
             type="text"
@@ -113,7 +130,9 @@ function LoginPage({ onLoginSuccess }) {
           />
         </div>
         <div style={inputGroupStyle}>
-          <label htmlFor="password" style={labelStyle}>Password:</label>
+          <label htmlFor="password" style={labelStyle}>
+            {isAdmin ? 'Admin Password:' : 'Password:'}
+          </label>
           <input
             style={inputStyle}
             type="password"
@@ -123,7 +142,9 @@ function LoginPage({ onLoginSuccess }) {
             required
           />
         </div>
-        <button type="submit" style={buttonStyle}>Login</button>
+        <button type="submit" style={buttonStyle}>
+          Login as {isAdmin ? 'Admin' : 'User'}
+        </button>
       </form>
     </div>
   );
