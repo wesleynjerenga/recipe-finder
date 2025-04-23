@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './App.css';
-// Import the component, not just the file for side effects
+
 import LoginPage from "./login.jsx";
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Example: Function to handle successful login
+  //Function to handle successful login
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
     // You might want to clear username/password from LoginPage state here
