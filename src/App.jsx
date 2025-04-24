@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './App.css';
-
+import Login from './login';
 import LoginPage from './components/LoginPage';
 import SearchBar from './components/SearchBar';
 import RecipeList from './components/RecipeList';
@@ -11,10 +11,31 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+
+  // Mock users database with roles
+  const validUsers = [
+    { username: 'user1', password: 'pass123', role: 'user' },
+    { username: 'admin1', password: 'admin123', role: 'admin' }
+  ];
 
   const API_URL = `https://www.themealdb.com/api/json/v1/1/search.php?s=`;
 
-  const handleLoginSuccess = () => setIsLoggedIn(true);
+  const handleLoginSuccess = (username, password, role) => {
+    const user = validUsers.find(
+      u => u.username === username && 
+          u.password === password && 
+          u.role === role
+    );
+    
+    if (user) {
+      setIsLoggedIn(true);
+      setUserRole(role);
+      setError(null);
+    } else {
+      setError('Invalid credentials for ' + role + ' login');
+    }
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -51,7 +72,7 @@ function App() {
   };
 
   if (!isLoggedIn) {
-    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+    return <Login onLoginSuccess={handleLoginSuccess} error={error} />;
   }
 
   return (
