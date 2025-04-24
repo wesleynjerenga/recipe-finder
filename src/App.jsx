@@ -4,6 +4,9 @@ import Login from './login';
 import LoginPage from './components/LoginPage';
 import SearchBar from './components/SearchBar';
 import RecipeList from './components/RecipeList';
+import { Routes, Route, Link } from 'react-router-dom';
+import Admin from './components/Admin/Admin';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
 
 function App() {
   const [query, setQuery] = useState('');
@@ -31,6 +34,7 @@ function App() {
     if (user) {
       setIsLoggedIn(true);
       setUserRole(role);
+      localStorage.setItem('userRole', role); // Add this line
       setError(null);
     } else {
       setError('Invalid credentials for ' + role + ' login');
@@ -65,6 +69,8 @@ function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setUserRole(null);
+    localStorage.removeItem('userRole'); // Add this line
     setQuery('');
     setRecipes([]);
     setError(null);
@@ -81,8 +87,26 @@ function App() {
       <button onClick={handleLogout}>
         Logout
       </button>
-      <SearchBar query={query} setQuery={setQuery} handleSearch={handleSearch} loading={loading} />
-      <RecipeList recipes={recipes} loading={loading} error={error} query={query} />
+      <nav className="nav-menu">
+        <Link to="/">Home</Link>
+        <Link to="/admin">Admin</Link>
+      </nav>
+      <Routes>
+        <Route path="/" element={
+          <>
+            <SearchBar query={query} setQuery={setQuery} handleSearch={handleSearch} loading={loading} />
+            <RecipeList recipes={recipes} loading={loading} error={error} query={query} />
+          </>
+        } />
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute>
+              <Admin />
+            </ProtectedRoute>
+          } 
+        />
+      </Routes>
     </div>
   );
 }

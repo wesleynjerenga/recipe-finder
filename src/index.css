@@ -54,6 +54,25 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.nav-menu {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.nav-menu a {
+  margin-right: 1rem;
+  text-decoration: none;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+.nav-menu a:hover {
+  background-color: #007bff;
+  color: white;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

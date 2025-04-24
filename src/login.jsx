@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
-function Login({ onLoginSuccess, error }) {
+function Login({ onLoginSuccess, serverError }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [loginError, setLoginError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError(''); // Clear any previous errors
+    setLoginError(''); // Clear any previous errors
     onLoginSuccess(username, password, isAdmin ? 'admin' : 'user');
   };
 
@@ -17,7 +17,7 @@ function Login({ onLoginSuccess, error }) {
     setIsAdmin(!isAdmin);
     setUsername('');
     setPassword('');
-    setError('');
+    setLoginError('');
   };
 
   return (
@@ -58,7 +58,8 @@ function Login({ onLoginSuccess, error }) {
             />
           </div>
 
-          {error && <div className="error-message">{error}</div>}
+          {serverError && <p className="error">{serverError}</p>}
+          {loginError && <p className="error">{loginError}</p>}
 
           <button 
             className="login-button" 
