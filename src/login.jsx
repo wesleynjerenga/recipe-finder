@@ -5,11 +5,11 @@ function Login({ onLoginSuccess, error }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [localError, setLocalError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError(''); // Clear any previous errors
+    setLocalError(''); // Clear any previous errors
     onLoginSuccess(username, password, isAdmin ? 'admin' : 'user');
   };
 
@@ -17,7 +17,7 @@ function Login({ onLoginSuccess, error }) {
     setIsAdmin(!isAdmin);
     setUsername('');
     setPassword('');
-    setError('');
+    setLocalError('');
   };
 
   return (
@@ -58,7 +58,7 @@ function Login({ onLoginSuccess, error }) {
             />
           </div>
 
-          {error && <div className="error-message">{error}</div>}
+          {localError && <div className="error-message">{localError}</div>}
 
           <button 
             className="login-button" 
@@ -73,4 +73,4 @@ function Login({ onLoginSuccess, error }) {
   );
 }
 
-export default Login;
+
