@@ -1,153 +1,77 @@
 import React, { useState } from 'react';
+import './App.css';
 
-function LoginPage({ onLoginSuccess }) {
+function Login({ onLoginSuccess, serverError }) {
+  const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [error, setError] = useState('');
+  const [loginError, setLoginError] = useState('');
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setError('');
-    console.log('Attempting login with:', username, password, 'as', isAdmin ? 'admin' : 'user');
-
-    // --- MOCK LOGIN ---
-    if (isAdmin) {
-      // Admin login check
-      if (username === "admin" && password === "admin123") {
-        console.log('Admin login successful');
-        if (onLoginSuccess) {
-          onLoginSuccess({ isAdmin: true });
-        }
-      } else {
-        console.log('Admin login failed');
-        setError('Invalid admin credentials');
-      }
-    } else {
-      // Regular user login check
-      if (username === "user" && password === "password") {
-        console.log('User login successful');
-        if (onLoginSuccess) {
-          onLoginSuccess({ isAdmin: false });
-        }
-      } else {
-        console.log('User login failed');
-        setError('Invalid username or password');
-      }
-    }
-    // --- END MOCK LOGIN ---
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoginError(''); // Clear any previous errors
+    onLoginSuccess(username, password, isAdmin ? 'admin' : 'user');
   };
 
-  const containerStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',
-    width: '100vw',
-    textAlign: 'center',
-    margin: 0,
-    padding: 0,
-    color: 'black',
-  };
-
-  const formStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-    backgroundColor: '#f9f9f9',
-    minWidth: '300px'
-  };
-
-  const inputGroupStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    width: '100%'
-  };
-
-  const labelStyle = {
-    marginBottom: '5px',
-    fontWeight: 'bold'
-  };
-
-  const inputStyle = {
-    padding: '8px',
-    width: 'calc(100% - 16px)',
-    border: '1px solid #ccc',
-    borderRadius: '4px'
-  };
-
-  const buttonStyle = {
-    padding: '10px 15px',
-    backgroundColor: '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    marginTop: '10px'
-  };
-
-  const errorStyle = {
-    color: 'red',
-    marginTop: '0',
-    marginBottom: '10px',
-    minHeight: '1.2em'
-  };
-
-  const toggleButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: isAdmin ? '#dc3545' : '#28a745',
-    marginBottom: '20px'
+  const toggleLoginType = () => {
+    setIsAdmin(!isAdmin);
+    setUsername('');
+    setPassword('');
+    setLoginError('');
   };
 
   return (
-    <div style={containerStyle}>
-      <h2>Login</h2>
+    <div className="login-container">
       <button 
-        style={toggleButtonStyle} 
-        onClick={() => setIsAdmin(!isAdmin)}
-        type="button"
+        className={`toggle-button ${isAdmin ? 'admin' : 'user'}`}
+        onClick={toggleLoginType}
       >
         Switch to {isAdmin ? 'User' : 'Admin'} Login
       </button>
-      <p style={errorStyle}>{error || '\u00A0'}</p>
-      <form onSubmit={handleSubmit} style={formStyle}>
-        <div style={inputGroupStyle}>
-          <label htmlFor="username" style={labelStyle}>
-            {isAdmin ? 'Admin Username:' : 'Username:'}
-          </label>
-          <input
-            style={inputStyle}
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div style={inputGroupStyle}>
-          <label htmlFor="password" style={labelStyle}>
-            {isAdmin ? 'Admin Password:' : 'Password:'}
-          </label>
-          <input
-            style={inputStyle}
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" style={buttonStyle}>
-          Login as {isAdmin ? 'Admin' : 'User'}
-        </button>
-      </form>
+
+      <div className="login-form">
+        <h2 className="login-title">{isAdmin ? 'Admin' : 'User'} Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label className="login-label" htmlFor="username">Username</label>
+            <input
+              id="username"
+              className="login-input"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder={`${isAdmin ? 'Admin' : 'User'} Username`}
+              required
+            />
+          </div>
+
+          <div className="input-group">
+            <label className="login-label" htmlFor="password">Password</label>
+            <input
+              id="password"
+              className="login-input"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+            />
+          </div>
+
+          {serverError && <p className="error">{serverError}</p>}
+          {loginError && <p className="error">{loginError}</p>}
+
+          <button 
+            className="login-button" 
+            type="submit"
+            disabled={!username || !password}
+          >
+            Login as {isAdmin ? 'Admin' : 'User'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
 
-export default LoginPage;
+export default Login;
